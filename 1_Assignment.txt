@@ -1,0 +1,37 @@
+echo "Enter three numbers"
+read a b c
+
+if [ $a -ge $b ] && [ $a -ge $c ]
+then
+    echo "$a is the greatest"
+elif [ $b -ge $a ] && [ $b -ge $c ]
+then
+    echo "$b is the greatest"
+else
+    echo "$c is the greatest"
+fi
+
+echo "Enter a number : "
+read n
+
+flag=0
+i=2
+m=$((n / 2))
+
+while [ $i -le $m ]
+do
+    rem=$((n % i))
+    if [ $rem -eq 0 ]
+    then
+        flag=1
+        break
+    fi
+    i=$((i + 1))
+done
+
+if [ $flag -eq 0 ] && [ $n -gt 1 ]
+then
+    echo "$n is a prime number"
+else
+    echo "$n is not a prime number"
+fi

@@ -1,0 +1,54 @@
+#include <stdio.h>
+
+int main()
+{
+    int t = 0, remain;
+    int at[10], bt[10], rt[10];
+    int wt = 0, tat = 0;
+
+    int n;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+    remain = n;
+
+    // Input Arrival Time and Burst Time for each process
+    for (int i = 0; i < n; i++)
+    {
+        printf("Enter Arrival Time and Burst Time for Process %d: ", i + 1);
+        scanf("%d %d", &at[i], &bt[i]);
+        rt[i] = bt[i];  // Initialize remaining burst time
+    }
+
+    int tq;
+    printf("Enter Time Quantum: ");
+    scanf("%d", &tq);
+
+    printf("\nProcess | Turnaround Time | Waiting Time\n");
+
+    for (int i = 0; remain != 0;)
+    {
+        if (rt[i] > 0)
+        {
+            int exec = (rt[i] > tq) ? tq : rt[i];  // Execute for the lesser of remaining time or time quantum
+            t += exec;
+            rt[i] -= exec;
+
+            if (rt[i] == 0)  // Process is finished
+            {
+                remain--;
+                int turnaround_time = t - at[i];
+                int waiting_time = turnaround_time - bt[i];
+                printf("P[%d]    | %d              | %d\n", i + 1, turnaround_time, waiting_time);
+                wt += waiting_time;
+                tat += turnaround_time;
+            }
+        }
+
+        i = (i + 1) % n;  // Round-robin cycle
+    }
+
+    printf("\nAverage Waiting Time = %.2f\n", (float)wt / n);
+    printf("Average Turnaround Time = %.2f\n", (float)tat / n);
+
+    return 0;
+}
