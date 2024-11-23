@@ -1,0 +1,105 @@
+#include <stdio.h>
+
+#define FRAME_COUNT 3
+
+// Optimal Page Replacement Function
+void optimalPageReplacement(int pages[], int n)
+{
+    int frames[FRAME_COUNT];
+    int pageFaults = 0;
+    
+    // Initialize frames to -1 (indicating empty)
+    for (int i = 0; i < FRAME_COUNT; i++) {
+        frames[i] = -1;
+    }
+
+    printf("Optimal Pages\tFrames\n");
+    for (int i = 0; i < n; i++) {
+        int page = pages[i];
+        int pageFound = 0;
+
+        // Check if the page is already in a frame
+        for (int j = 0; j < FRAME_COUNT; j++) {
+            if (frames[j] == page) {
+                pageFound = 1;
+                break;
+            }
+        }
+
+        // If page is not found in frames, replace one
+        if (!pageFound) {
+            int replaceIndex = -1;
+            int farthestIndex = i + 1;
+
+            // Find an empty frame
+            for (int j = 0; j < FRAME_COUNT; j++) {
+                if (frames[j] == -1) {
+                    replaceIndex = j;
+                    break;
+                }
+            }
+
+            // If no empty frame, find the optimal frame to replace
+            if (replaceIndex == -1) {
+                for (int j = 0; j < FRAME_COUNT; j++) {
+                    int nextUse = -1;
+                    for (int k = i + 1; k < n; k++) {
+                        if (pages[k] == frames[j]) {
+                            nextUse = k;
+                            break;
+                        }
+                    }
+                    if (nextUse == -1) { // Page not used again
+                        replaceIndex = j;
+                        break;
+                    }
+                    else if (nextUse > farthestIndex) { // Farthest use
+                        farthestIndex = nextUse;
+                        replaceIndex = j;
+                    }
+                }
+            }
+
+            frames[replaceIndex] = page;
+            pageFaults++;
+        }
+
+        // Print the current page and frame state
+        printf("%d\t\t", page);
+        for (int j = 0; j < FRAME_COUNT; j++) {
+            if (frames[j] != -1) {
+                printf("%d ", frames[j]);
+            }
+        }
+        printf("\n");
+    }
+
+    // Print the final page fault count and hit/miss frequencies
+    printf("Total Page Faults (Optimal): %d\n", pageFaults);
+    int hits = n - pageFaults;
+    printf("Fault Frequency: %.2f%%\n", (float)pageFaults / n * 100);
+    printf("Hit Frequency: %.2f%%\n", (float)hits / n * 100);
+}
+
+// Main function to test the Optimal Page Replacement
+int main()
+{
+    int n;
+
+    // Input the number of pages
+    printf("Enter the number of pages: ");
+    scanf("%d", &n);
+
+    int pages[n];
+
+    // Input the page reference string
+    printf("Enter the page reference string:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &pages[i]);
+    }
+
+    // Call Optimal Page Replacement
+    optimalPageReplacement(pages, n);
+
+    return 0;
+}
